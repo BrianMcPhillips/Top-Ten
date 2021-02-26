@@ -1,6 +1,8 @@
 // Import DOM elements
 const draggableList = document.getElementById('draggable-list'),
   check = document.getElementById('check');
+const draggables = document.querySelectorAll('.draggable'),
+  dragListItems = document.querySelectorAll('.draggable-list li');
 
 const richestPeople = [
   'Jeff Bezos',
@@ -41,5 +43,50 @@ function createList() {
 
       listItems.push(listItem);
       draggableList.appendChild(listItem);
+  });
+
+  addEventListeners();
+}
+
+function dragStart() {
+  dragStartIndex = +this.closest('li').getAttribute('data-index');
+}
+
+function dragEnter() {
+  this.classList.add('over');
+}
+
+function dragLeave() {
+  this.classList.remove('over');
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function dragDrop() {
+  const dragEndIndex = +this.getAttribute('data-index');
+  swapItems(dragStartIndex, dragEndIndex);
+  this.classList.remove('over');
+}
+
+function swapItems(fromIndex, toIndex) {
+  const itemOne = listItems[fromIndex].querySelector('.draggable');
+  const itemTwo = listItems[toIndex].querySelector('.draggable');
+
+  listItems[fromIndex].appendChild(itemTwo);
+  listItems[toIndex].appendChild(itemOne);
+}
+
+function addEventListeners() {
+  draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', dragStart);
+  });
+
+  dragListItems.forEach(item => {
+    item.addEventListener('dragover', dragOver);
+    item.addEventListener('drop', dragDrop);
+    item.addEventListener('dragenter', dragEnter);
+    item.addEventListener('dragleave', dragLeave);
   });
 }
